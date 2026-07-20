@@ -1,0 +1,86 @@
+================================================================================
+ESTRATÉGIAS DE AUTOMAÇÃO DE EVENTOS DE CONVERSÃO (META CAPI + WHATSAPP)
+================================================================================
+
+Este documento descreve as arquiteturas para eliminar o preenchimento manual no painel
+administrativo e automatizar 100% dos disparos de "SubmitApplication" e "Purchase".
+
+--------------------------------------------------------------------------------
+1. AUTOMAÇÃO DE "SubmitApplication" (Dados/Telefone Enviados)
+--------------------------------------------------------------------------------
+Objetivo: Vincular o telefone do cliente ao código de referência assim que ele inicia
+a conversa no WhatsApp.
+
+Como Funciona:
+A) O cliente clica no botão da Landing Page e envia a mensagem automática:
+   "Olá! Quero saber mais sobre o produto. [Não apague este código: REF-1092]"
+
+B) Você integra seu número a uma API de WhatsApp (Ex: Evolution API, Z-API, Baileys)
+   ou plataformas de chatbot (Typebot, n8n, Make.com).
+
+C) Assim que a mensagem é recebida no WhatsApp:
+   - A API do WhatsApp envia uma notificação (Webhook) com o texto da mensagem e o
+     número do remetente (ex: 5511999999999).
+   - Um script simples (ou fluxo no n8n) lê o texto da mensagem usando Regex para
+     encontrar o código "REF-1092".
+   - O robô faz uma chamada HTTP ao seu backend:
+     POST http://localhost:3000/api/leads/status
+     Body: {
+       "refCode": "REF-1092",
+       "phoneNumber": "5511999999999",
+       "status": "data_shared"
+     }
+
+D) O backend atualiza o lead no PostgreSQL e dispara o evento "SubmitApplication"
+   à Meta com os dados em milissegundos.
+
+--------------------------------------------------------------------------------
+2. AUTOMAÇÃO DE "Purchase" (Compra Concluída)
+--------------------------------------------------------------------------------
+Objetivo: Disparar o evento de conversão de compra assim que o pagamento for aprovado
+no gateway, cruzando os dados do comprador.
+
+Como Funciona:
+A) O cliente realiza a compra na plataforma de checkout (Kiwify, Hotmart, Stripe, etc.).
+
+B) A plataforma envia uma notificação (Webhook) de "Venda Aprovada" para a sua API:
+   POST http://localhost:3000/api/webhooks/payment (Endpoint a ser criado)
+   Body enviado pelo gateway:
+   {
+     "event": "approved",
+     "phone": "5511999999999",
+     "email": "cliente@email.com",
+     "amount": 197.00
+   }
+
+C) Seu backend recebe esse JSON, extrai o telefone e busca no banco de dados:
+   SELECT * FROM leads_tracking 
+   WHERE phone_number = '5511999999999' 
+   ORDER BY created_at DESC 
+   LIMIT 1;
+
+D) Ao encontrar o lead correspondente (que teve o telefone associado no Passo 1):
+   - Atualiza o status para "completed".
+   - Dispara o evento "Purchase" à Meta com o valor da compra (197.00) e os cookies
+     fbp/fbc/fbclid salvos originalmente.
+
+--------------------------------------------------------------------------------
+DIAGRAMA DO FLUXO INTEGRADO
+--------------------------------------------------------------------------------
+
+[Cliente clica no anúncio]
+         │
+         ▼
+[Landing Page (Gera REF-1234 e envia 'Contact')]
+         │
+         ▼
+[Cliente abre o WhatsApp com a mensagem: '[REF-1234]']
+         │
+         ▼
+[API WhatsApp lê a mensagem ➔ Associa o Telefone com o REF-1234 ➔ Envia 'SubmitApplication']
+         │
+         ▼
+[Cliente finaliza a compra no Checkout]
+         │
+         ▼
+[Webhook do Checkout ➔ Localiza lead pelo Telefone no Banco ➔ Envia 'Purchase']
