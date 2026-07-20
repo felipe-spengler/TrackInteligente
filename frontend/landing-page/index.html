@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto Premium - Compre pelo WhatsApp</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --whatsapp-color: #25d366;
+      --whatsapp-hover: #128c7e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient background glows */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      top: -100px;
+      left: -100px;
+      z-index: -1;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0,0,0,0) 70%);
+      bottom: -100px;
+      right: -100px;
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 20px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 50%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    p.description {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    /* Price Section */
+    .price-tag {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 35px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .price-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+
+    .price-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* WhatsApp Button Styles */
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background-color: var(--whatsapp-color);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 16px 32px;
+      border-radius: 16px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+    }
+
+    .whatsapp-btn:hover {
+      background-color: var(--whatsapp-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(37, 211, 102, 0.4);
+    }
+
+    .whatsapp-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Generated Reference Display */
+    .ref-container {
+      margin-top: 25px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .ref-code {
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: #38bdf8;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <span class="badge">🔥 Oferta Exclusiva</span>
+    <h1>Método Vendas Automáticas</h1>
+    <p class="description">
+      Descubra o passo a passo definitivo para otimizar suas campanhas e atribuir conversões vindas do WhatsApp diretamente no Gerenciador de Anúncios.
+    </p>
+
+    <div class="price-tag">
+      <div class="price-value">R$ 197,00</div>
+      <div class="price-label">Ou em até 12x no cartão de crédito</div>
+    </div>
+
+    <!-- WhatsApp Button (Initially static wa.me link) -->
+    <a href="https://wa.me/5511999999999" id="whatsapp-link" class="whatsapp-btn">
+      <svg viewBox="0 0 24 24">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436.002 9.858-4.42 9.86-9.864.001-2.636-1.02-5.11-2.871-6.963C16.612 1.943 14.135.922 11.5.922c-5.44 0-9.866 4.423-9.868 9.866-.001 1.802.483 3.565 1.402 5.121L1.964 21.6l5.772-1.512L6.647 19.15zM17.15 13.9c-.28-.14-1.65-.81-1.905-.9-.256-.095-.44-.14-.625.14-.184.28-.71.9-.87 1.085-.16.185-.32.21-.6.07-.28-.14-1.182-.437-2.253-1.393-.83-.74-1.39-1.65-1.552-1.93-.163-.28-.018-.43.12-.57.127-.128.28-.328.422-.492.14-.165.188-.28.282-.47.093-.187.047-.35-.023-.49-.07-.14-.625-1.5-.857-2.06-.226-.54-.452-.467-.625-.476-.16-.008-.346-.01-.53-.01-.186 0-.49.07-.746.35-.257.28-.98.96-.98 2.34 0 1.38 1 2.716 1.14 2.9.14.185 1.968 3.005 4.77 4.21.666.286 1.185.457 1.59.585.67.213 1.28.183 1.76.11.537-.08 1.65-.675 1.884-1.328.234-.652.234-1.21.165-1.327-.07-.11-.256-.18-.536-.32z"/>
+      </svg>
+      Falar com Vendedor & Comprar
+    </a>
+
+    <div class="ref-container">
+      Seu código de rastreamento: <span id="ref-code-display" class="ref-code">Gerando...</span>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Premium Solution. Todos os direitos reservados.
+  </footer>
+
+  <!-- Injection of CAPI tracking script -->
+  <script src="tracking.js"></script>
+</body>
+</html>

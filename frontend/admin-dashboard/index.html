@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAPI WhatsApp - Painel do Vendedor</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #080c14;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --success-color: #10b981;
+      --success-hover: #059669;
+      --warning-color: #f59e0b;
+      --accent-color: #6366f1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Background glows */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%);
+      top: -200px;
+      right: -100px;
+      z-index: -1;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 70%);
+      bottom: -200px;
+      left: -100px;
+      z-index: -1;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 40%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-success {
+      background: var(--success-color);
+      color: #ffffff;
+    }
+
+    .btn-success:hover {
+      background: var(--success-hover);
+    }
+
+    /* Data display items */
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.95rem;
+    }
+
+    .data-row:last-child {
+      border-bottom: none;
+    }
+
+    .data-label {
+      color: var(--text-muted);
+    }
+
+    .data-value {
+      font-weight: 600;
+      color: #f3f4f6;
+    }
+
+    .status-badge {
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status-initiated {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    .status-data_shared {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .status-completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    /* Feedback message box */
+    .alert-box {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    /* Visual tracking graph logs */
+    .logs-panel {
+      margin-top: 24px;
+    }
+
+    .meta-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .meta-status-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1>Painel de Atribuição Meta CAPI</h1>
+      <p>Gerenciamento e envio manual de eventos WhatsApp de vendas</p>
+    </header>
+
+    <div class="grid">
+      <!-- Search & Lead Details Column -->
+      <div>
+        <div class="card">
+          <h2>🔍 Localizar Lead</h2>
+          <div class="form-group">
+            <label for="search-ref">Código de Referência (Whats)</label>
+            <input type="text" id="search-ref" placeholder="Ex: REF-4821" style="text-transform: uppercase;">
+          </div>
+          <button id="btn-search" class="btn btn-primary">Buscar Detalhes</button>
+          
+          <div id="search-alert" class="alert-box"></div>
+        </div>
+
+        <div class="card" style="margin-top: 24px;">
+          <h2>📋 Informações do Lead</h2>
+          <div id="lead-info-empty" style="color: var(--text-muted); text-align: center; padding: 20px 0;">
+            Busque um lead acima para ver as informações de cliques e UTMs.
+          </div>
+          <div id="lead-info-content" style="display: none;">
+            <div class="data-row">
+              <span class="data-label">Ref Code</span>
+              <span class="data-value" id="info-ref">-</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Status</span>
+              <span id="info-status" class="status-badge">-</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Telefone</span>
+              <span class="data-value" id="info-phone">-</span>
+            </div>
+            <div class="data-row text-truncate">
+              <span class="data-label">fbclid</span>
+              <span class="data-value" id="info-fbclid" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Origem (utm_source)</span>
+              <span class="data-value" id="info-source">-</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Mídia (utm_medium)</span>
+              <span class="data-value" id="info-medium">-</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Campanha (utm_campaign)</span>
+              <span class="data-value" id="info-campaign">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action & Trigger Event Column -->
+      <div>
+        <div class="card">
+          <h2>🚀 Disparar Evento CAPI</h2>
+          <form id="event-form">
+            <div class="form-group">
+              <label for="event-ref">Código do Lead</label>
+              <input type="text" id="event-ref" readonly style="background: rgba(255, 255, 255, 0.02); color: var(--text-muted);">
+            </div>
+            
+            <div class="form-group">
+              <label for="event-phone">Telefone do Comprador</label>
+              <input type="tel" id="event-phone" placeholder="Ex: 11999999999 ou +5511999999999" required>
+            </div>
+
+            <div class="form-group">
+              <label for="event-status">Novo Status (Dispara Conversão)</label>
+              <select id="event-status" required>
+                <option value="" disabled selected>Selecione um status...</option>
+                <option value="data_shared">Dados Enviados (SubmitApplication)</option>
+                <option value="completed">Compra Concluída (Purchase)</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="group-value" style="display: none;">
+              <label for="event-value">Valor da Venda (BRL)</label>
+              <input type="number" id="event-value" step="0.01" value="197.00" placeholder="Ex: 197.00">
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn btn-success" disabled>Atualizar & Disparar Evento</button>
+          </form>
+
+          <div id="action-alert" class="alert-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
